@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.bmc.baccus.controller.WineActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/ivWine"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:contentDescription="Imagen que representa a un vino"
+            android:src="@drawable/bembibre" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvWineName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Wine Name" />
+
+            <RatingBar
+                android:id="@+id/rbWine"
+                style="?android:attr/ratingBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/tvWineCompany"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Wine Company" />
+
+            <TextView
+                android:id="@+id/tvWineType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Wine Type" />
+
+            <TextView
+                android:id="@+id/tvWineOrigin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Wine Origin" />
+
+            <ScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/llGrapesContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                </LinearLayout>
+
+            </ScrollView>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2">
+
+        <TextView
+            android:id="@+id/tvWineNotes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Wine Notes" />
+
+    </ScrollView>
+
+</LinearLayout>
