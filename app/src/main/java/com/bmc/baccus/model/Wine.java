@@ -2,10 +2,11 @@ package com.bmc.baccus.model;
 
 import com.google.gson.Gson;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Wine {
+public class Wine implements Serializable {
     private String name = null;
     private String type = null;
     private int photo = 0;

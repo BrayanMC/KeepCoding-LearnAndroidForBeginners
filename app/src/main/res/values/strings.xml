@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Baccus</string>
+    <string name="reload">Reload</string>
+    <string name="choose_an_option">Elige una opción</string>
+    <string name="fit_radio">Ajustada</string>
+    <string name="center_radio">Centrada</string>
+    <string name="cancel_button">Cancelar</string>
+    <string name="save_button">Guardar</string>
+    <string name="settings">Ajustes</string>
 </resources>

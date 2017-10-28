@@ -1,9 +1,13 @@
 package com.bmc.baccus.controller;
 
-import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -13,13 +17,14 @@ import android.widget.ProgressBar;
 
 import com.bmc.baccus.R;
 import com.bmc.baccus.model.Wine;
+import com.bmc.baccus.util.AppConstants;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class WebActivity extends Activity {
+public class WebActivity extends AppCompatActivity {
 
-    private static final String STATE_URL = "url";
+    private static final String STATE_URL = "CURRENT_URL";
 
     // Modelo
     private Wine oWine = null;
@@ -31,14 +36,16 @@ public class WebActivity extends Activity {
     @BindView(R.id.pbLoading)
     ProgressBar pbLoading;
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web);
         ButterKnife.bind(this);
 
-        // Creamos el modelo
-        createWineObject();
+        if (intentHasExtra(AppConstants.EXTRA_OBJECT_WINE)) {
+            oWine = (Wine) getIntent().getSerializableExtra(AppConstants.EXTRA_OBJECT_WINE);
+        }
 
         // Configurar views
         wbBrowser.setWebViewClient(new WebViewClient() {
@@ -72,26 +79,42 @@ public class WebActivity extends Activity {
         }
     }
 
-    private void createWineObject() {
-        oWine = new Wine("Bembibre"
-                , "Tinto"
-                , R.drawable.vegaval
-                , "Dominio de Tares"
-                , "http://www.dominiodetares.com/portfolio/bembibre/"
-                , "Este vino muestra toda la complejidad y la elegencia de la variedad Mencía. En fase visual luce un color rojo picota muy cubierto con tonalidades violáceas en el menisco. En nariz aparecen frutales muy intensos de frutas rojos (frambuesa, cereza) y una potente ciruela negra, así como tonos florales de la gama de las rosas y violetas, vegetales muy elegantes y complementarios, hojarasca verde, tabaco y madres aromáticas (sándalo) que le brinda un toque ciertamente perfumado."
-                , "El Bierzo"
-                , 5);
-
-        addGrape("Mencía");
-    }
-
-    private void addGrape(String newGrape) {
-        oWine.addGrape(newGrape);
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        fileList();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(STATE_URL, wbBrowser.getUrl());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu_web, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+
+        switch (item.getItemId()) {
+            case R.id.action_reload:
+                wbBrowser.reload();
+                return true;
+        }
+
+        return false;
+    }
+
+    private boolean intentHasExtra(String key) {
+        return getIntent().hasExtra(key);
     }
 }
