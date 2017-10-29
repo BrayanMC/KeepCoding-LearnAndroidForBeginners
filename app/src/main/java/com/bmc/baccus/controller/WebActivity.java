@@ -17,7 +17,7 @@ import android.widget.ProgressBar;
 
 import com.bmc.baccus.R;
 import com.bmc.baccus.model.Wine;
-import com.bmc.baccus.util.AppConstants;
+import com.bmc.baccus.utils.AppConstants;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

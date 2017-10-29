@@ -16,7 +16,9 @@ import android.widget.TextView;
 import com.bmc.baccus.BuildConfig;
 import com.bmc.baccus.R;
 import com.bmc.baccus.model.Wine;
-import com.bmc.baccus.util.AppConstants;
+import com.bmc.baccus.utils.AppConstants;
+import com.bmc.baccus.utils.navigation.Navigation;
+import com.bmc.baccus.utils.navigation.NavigationUI;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -66,9 +68,6 @@ public class WineActivity extends AppCompatActivity {
         // Creamos el modelo
         createWineObject();
 
-        // Accedemos a las vistas desde el modelo
-        // findViewById()
-
         // Damos valor a las vistas con el modelo
         setViewsFromModel();
 
@@ -96,7 +95,12 @@ public class WineActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.action_settings:
-                startActivityForResult(new Intent(this, SettingsActivity.class).putExtra(AppConstants.EXTRA_WINE_IMAGE_SCALE_TYPE, ivWine.getScaleType() == ImageView.ScaleType.FIT_XY ? AppConstants.SCALE_TYPE_FIT_XY : AppConstants.SCALE_TYPE_FIT_CENTER), SETTINGS_REQUEST);
+                Navigation.getInstance().startActivityForResultWithExtras(this
+                        , new Intent().putExtra(AppConstants.EXTRA_WINE_IMAGE_SCALE_TYPE, ivWine.getScaleType() == ImageView.ScaleType.FIT_XY ? AppConstants.SCALE_TYPE_FIT_XY : AppConstants.SCALE_TYPE_FIT_CENTER)
+                        , NavigationUI.Activity.SETTINGS
+                        , false
+                        , SETTINGS_REQUEST);
+
                 return true;
         }
 
@@ -140,7 +144,11 @@ public class WineActivity extends AppCompatActivity {
 
     @OnClick(R.id.ibtnGoToWeb)
     public void goToDetails(View view) {
-        startActivity(new Intent(this, WebActivity.class).putExtra(AppConstants.EXTRA_OBJECT_WINE, oWine));
+        Navigation.getInstance().startActivityForResultWithExtras(this
+                , new Intent().putExtra(AppConstants.EXTRA_OBJECT_WINE, oWine)
+                , NavigationUI.Activity.WEB
+                , false
+                , SETTINGS_REQUEST);
     }
 
     private void setViewsFromModel() {
@@ -151,6 +159,7 @@ public class WineActivity extends AppCompatActivity {
         rbWine.setRating(oWine.getRating());
         tvWineCompany.setText(oWine.getCompanyName());
         tvWineNotes.setText(oWine.getNotes());
+        rbWine.setRating(oWine.getRating());
     }
 
     private void updateGrapesList() {

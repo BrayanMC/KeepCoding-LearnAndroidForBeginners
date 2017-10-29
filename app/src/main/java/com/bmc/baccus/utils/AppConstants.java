@@ -1,4 +1,4 @@
-package com.bmc.baccus.util;
+package com.bmc.baccus.utils;
 
 public class AppConstants {
 

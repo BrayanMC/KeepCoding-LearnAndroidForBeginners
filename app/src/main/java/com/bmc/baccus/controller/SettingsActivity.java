@@ -8,7 +8,9 @@ import android.view.View;
 import android.widget.RadioGroup;
 
 import com.bmc.baccus.R;
-import com.bmc.baccus.util.AppConstants;
+import com.bmc.baccus.utils.AppConstants;
+import com.bmc.baccus.utils.navigation.Navigation;
+import com.bmc.baccus.utils.navigation.NavigationUI;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -55,8 +57,13 @@ public class SettingsActivity extends Activity {
     }
 
     private void setExtraWithScaleType(AppConstants.ScaleType type) {
-        setResult(RESULT_OK, new Intent(this, WineActivity.class).putExtra(AppConstants.EXTRA_WINE_IMAGE_SCALE_TYPE, type.getType() == 0 ? AppConstants.SCALE_TYPE_FIT_XY : AppConstants.SCALE_TYPE_FIT_CENTER));
-        backToWineActivity();
+//        setResult(RESULT_OK, new Intent(this, WineActivity.class).putExtra(AppConstants.EXTRA_WINE_IMAGE_SCALE_TYPE, type.getType() == 0 ? AppConstants.SCALE_TYPE_FIT_XY : AppConstants.SCALE_TYPE_FIT_CENTER));
+
+        Navigation.getInstance().setResult(RESULT_OK
+                , this
+                , new Intent().putExtra(AppConstants.EXTRA_WINE_IMAGE_SCALE_TYPE, type.getType() == 0 ? AppConstants.SCALE_TYPE_FIT_XY : AppConstants.SCALE_TYPE_FIT_CENTER)
+                , NavigationUI.Activity.WINE
+                , true);
     }
 
     private void saveSettings() {
