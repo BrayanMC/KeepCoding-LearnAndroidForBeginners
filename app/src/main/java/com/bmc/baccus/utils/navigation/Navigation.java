@@ -34,7 +34,7 @@ public class Navigation {
         }
     }
 
-    public void startActivityWithBundle(Context context, Intent extras, String activity, boolean destroy) {
+    public void startActivityWithExtras(Context context, Intent extras, String activity, boolean destroy) {
         try {
             Intent intent = new Intent();
             intent.putExtras(extras);

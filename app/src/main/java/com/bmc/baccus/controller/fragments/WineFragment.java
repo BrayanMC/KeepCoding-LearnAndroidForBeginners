@@ -3,6 +3,7 @@ package com.bmc.baccus.controller.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -21,6 +22,7 @@ import com.bmc.baccus.BuildConfig;
 import com.bmc.baccus.R;
 import com.bmc.baccus.model.Wine;
 import com.bmc.baccus.utils.AppConstants;
+import com.bmc.baccus.utils.PreferencesConstants;
 import com.bmc.baccus.utils.navigation.Navigation;
 import com.bmc.baccus.utils.navigation.NavigationUI;
 
@@ -135,6 +137,15 @@ public class WineFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(STAGE_IMAGE_SCALE_TYPE, ivWine.getScaleType() == ImageView.ScaleType.FIT_XY ? AppConstants.SCALE_TYPE_FIT_XY : AppConstants.SCALE_TYPE_FIT_CENTER);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (PreferenceManager.getDefaultSharedPreferences(getActivity()).contains(PreferencesConstants.PREF_IMAGE_SCALE_TYPE)) {
+            setRadioGroupCheck(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(PreferencesConstants.PREF_IMAGE_SCALE_TYPE, "0"));
+        }
     }
 
     private void getWineObjectFromArguments() {

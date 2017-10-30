@@ -2,7 +2,9 @@ package com.bmc.baccus.controller.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,6 +15,7 @@ import android.widget.RadioGroup;
 
 import com.bmc.baccus.R;
 import com.bmc.baccus.utils.AppConstants;
+import com.bmc.baccus.utils.PreferencesConstants;
 import com.bmc.baccus.utils.navigation.Navigation;
 import com.bmc.baccus.utils.navigation.NavigationUI;
 
@@ -65,6 +68,9 @@ public class SettingsFragment extends Fragment {
     }
 
     private void saveArgumentsWithScaleType(AppConstants.ScaleType type) {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+        editor.putString(PreferencesConstants.PREF_IMAGE_SCALE_TYPE, type.getType() == 0 ? AppConstants.SCALE_TYPE_FIT_XY : AppConstants.SCALE_TYPE_FIT_CENTER);
+
         Navigation.getInstance().setResult(Activity.RESULT_OK
                 , getActivity()
                 , new Intent().putExtra(AppConstants.EXTRA_WINE_IMAGE_SCALE_TYPE, type.getType() == 0 ? AppConstants.SCALE_TYPE_FIT_XY : AppConstants.SCALE_TYPE_FIT_CENTER)

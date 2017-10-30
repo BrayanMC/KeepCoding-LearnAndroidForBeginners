@@ -1,7 +1,5 @@
 package com.bmc.baccus.model;
 
-import com.google.gson.Gson;
-
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
@@ -105,6 +103,7 @@ public class Wine implements Serializable {
     }
 
     public String toString() {
-        return new Gson().toJson(this);
+//        return new Gson().toJson(this);
+        return getName();
     }
 }

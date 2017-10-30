@@ -11,15 +11,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/background_material_dark"
-        android:elevation="10dp"
         android:theme="@style/AppTheme.DarkActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        tools:ignore="PrivateResource">
-
-    </android.support.v7.widget.Toolbar>
+        tools:ignore="PrivateResource" />
 
     <FrameLayout
-        android:id="@+id/fragment_container"
+        android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

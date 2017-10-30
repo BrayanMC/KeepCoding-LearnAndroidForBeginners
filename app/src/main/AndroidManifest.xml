@@ -21,8 +21,8 @@
         <activity
             android:name=".controller.activities.WebActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:parentActivityName=".controller.activities.WineryActivity"
             android:label="@string/app_name"
+            android:parentActivityName=".controller.activities.WineryActivity"
             tools:targetApi="jelly_bean" />
 
         <activity
@@ -31,7 +31,14 @@
 
         <activity
             android:name=".controller.activities.WineryActivity"
-            android:label="@string/title_activity_winery">
+            android:label="@string/title_activity_winery"
+            android:parentActivityName=".controller.activities.WineListActivity">
+
+        </activity>
+
+        <activity
+            android:name=".controller.activities.WineListActivity"
+            android:label="@string/app_name">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,6 +47,7 @@
             </intent-filter>
 
         </activity>
+
     </application>
 
 </manifest>
