@@ -2,7 +2,9 @@ package com.bmc.baccus.utils;
 
 public class AppConstants {
 
-    public static final String EXTRA_OBJECT_WINE = "OBJECT_WINE";
+    public static final String ARG_OBJECT_WINE = "ARG_OBJECT_WINE";
+    public static final String EXTRA_OBJECT_WINE = "EXTRA_OBJECT_WINE";
+    public static final String ARG_WINE_IMAGE_SCALE_TYPE = "WINE_IMAGE_SCALE_TYPE";
     public static final String EXTRA_WINE_IMAGE_SCALE_TYPE = "WINE_IMAGE_SCALE_TYPE";
 
     public static final String SCALE_TYPE_FIT_XY = "0";

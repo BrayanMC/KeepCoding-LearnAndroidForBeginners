@@ -1,14 +1,17 @@
-package com.bmc.baccus.controller;
+package com.bmc.baccus.controller.fragments;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
@@ -22,7 +25,7 @@ import com.bmc.baccus.utils.AppConstants;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class WebActivity extends AppCompatActivity {
+public class WebFragment extends Fragment {
 
     private static final String STATE_URL = "CURRENT_URL";
 
@@ -37,14 +40,16 @@ public class WebActivity extends AppCompatActivity {
     ProgressBar pbLoading;
 
     @SuppressLint("SetJavaScriptEnabled")
+    @Nullable
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_web);
-        ButterKnife.bind(this);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
 
-        if (intentHasExtra(AppConstants.EXTRA_OBJECT_WINE)) {
-            oWine = (Wine) getIntent().getSerializableExtra(AppConstants.EXTRA_OBJECT_WINE);
+        View rootView = inflater.inflate(R.layout.fragment_web, container, false);
+        ButterKnife.bind(this, rootView);
+
+        if (argumentsContainsKey(AppConstants.ARG_OBJECT_WINE)) {
+            getWineObjectFromArguments();
         }
 
         // Configurar views
@@ -77,28 +82,26 @@ public class WebActivity extends AppCompatActivity {
         } else {
             wbBrowser.loadUrl(savedInstanceState.getString(STATE_URL));
         }
+
+        return rootView;
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        fileList();
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(STATE_URL, wbBrowser.getUrl());
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.menu_web, menu);
-
-        return true;
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_web, menu);
     }
 
     @Override
@@ -114,7 +117,11 @@ public class WebActivity extends AppCompatActivity {
         return false;
     }
 
-    private boolean intentHasExtra(String key) {
-        return getIntent().hasExtra(key);
+    private void getWineObjectFromArguments() {
+        oWine = (Wine) getArguments().getSerializable(AppConstants.ARG_OBJECT_WINE);
+    }
+
+    private boolean argumentsContainsKey(String key) {
+        return getArguments().containsKey(key);
     }
 }

@@ -7,4 +7,7 @@
     <string name="cancel_button">Cancelar</string>
     <string name="save_button">Guardar</string>
     <string name="settings">Ajustes</string>
+    <string name="title_activity_winery">WineryActivity</string>
+    <string name="next">Siguiente</string>
+    <string name="previous">Anterior</string>
 </resources>

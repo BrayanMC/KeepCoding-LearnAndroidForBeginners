@@ -14,8 +14,8 @@ public class NavigationUI {
     @StringDef({WINE, SETTINGS, WEB})
     @Retention(RetentionPolicy.SOURCE)
     public @interface Activity {
-        String WINE = "com.bmc.baccus.controller.WineActivity";
-        String SETTINGS = "com.bmc.baccus.controller.SettingsActivity";
-        String WEB = "com.bmc.baccus.controller.WebActivity";
+        String WINE = "com.bmc.baccus.controller.activities.WineActivity";
+        String SETTINGS = "com.bmc.baccus.controller.activities.SettingsActivity";
+        String WEB = "com.bmc.baccus.controller.activities.WebActivity";
     }
 }

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 public class Navigation {
 
@@ -29,7 +30,7 @@ public class Navigation {
                 ((Activity) (context)).finish();
             }
         } catch (ActivityNotFoundException e) {
-            e.printStackTrace();
+            Log.e("", e.getMessage());
         }
     }
 
@@ -43,7 +44,7 @@ public class Navigation {
                 ((Activity) (context)).finish();
             }
         } catch (ActivityNotFoundException e) {
-            e.printStackTrace();
+            Log.e("", e.getMessage());
         }
     }
 
@@ -56,7 +57,7 @@ public class Navigation {
                 ((Activity) (context)).finish();
             }
         } catch (ActivityNotFoundException e) {
-            e.printStackTrace();
+            Log.e("", e.getMessage());
         }
     }
 
@@ -70,7 +71,7 @@ public class Navigation {
                 ((Activity) (context)).finish();
             }
         } catch (ActivityNotFoundException e) {
-            e.printStackTrace();
+            Log.e("", e.getMessage());
         }
     }
 
@@ -84,7 +85,7 @@ public class Navigation {
                 ((Activity) (context)).finish();
             }
         } catch (ActivityNotFoundException e) {
-            e.printStackTrace();
+            Log.e("", e.getMessage());
         }
     }
 }

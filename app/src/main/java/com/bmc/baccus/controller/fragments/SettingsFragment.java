@@ -1,10 +1,14 @@
-package com.bmc.baccus.controller;
+package com.bmc.baccus.controller.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.RadioGroup;
 
 import com.bmc.baccus.R;
@@ -16,21 +20,25 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class SettingsActivity extends Activity {
+public class SettingsFragment extends Fragment {
 
     // Vistas
     @BindView(R.id.rgScaleType)
     RadioGroup rgScaleType;
 
+    @Nullable
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
-        ButterKnife.bind(this);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
 
-        if (intentHasExtra(AppConstants.EXTRA_WINE_IMAGE_SCALE_TYPE)) {
-            setRadioGroupCheck(getIntent().getStringExtra(AppConstants.EXTRA_WINE_IMAGE_SCALE_TYPE));
+        View rootView = inflater.inflate(R.layout.fragmnet_settings, container, false);
+        ButterKnife.bind(this, rootView);
+
+        if (argumentsContainsKey(AppConstants.ARG_WINE_IMAGE_SCALE_TYPE)) {
+            setRadioGroupCheck(getArguments().getString(AppConstants.ARG_WINE_IMAGE_SCALE_TYPE));
         }
+
+        return rootView;
     }
 
     @OnClick(R.id.btnCancel)
@@ -52,15 +60,13 @@ public class SettingsActivity extends Activity {
     }
 
     private void cancelSettings() {
-        setResult(RESULT_CANCELED);
-        backToWineActivity();
+        getActivity().setResult(Activity.RESULT_CANCELED);
+        getActivity().finish();
     }
 
-    private void setExtraWithScaleType(AppConstants.ScaleType type) {
-//        setResult(RESULT_OK, new Intent(this, WineActivity.class).putExtra(AppConstants.EXTRA_WINE_IMAGE_SCALE_TYPE, type.getType() == 0 ? AppConstants.SCALE_TYPE_FIT_XY : AppConstants.SCALE_TYPE_FIT_CENTER));
-
-        Navigation.getInstance().setResult(RESULT_OK
-                , this
+    private void saveArgumentsWithScaleType(AppConstants.ScaleType type) {
+        Navigation.getInstance().setResult(Activity.RESULT_OK
+                , getActivity()
                 , new Intent().putExtra(AppConstants.EXTRA_WINE_IMAGE_SCALE_TYPE, type.getType() == 0 ? AppConstants.SCALE_TYPE_FIT_XY : AppConstants.SCALE_TYPE_FIT_CENTER)
                 , NavigationUI.Activity.WINE
                 , true);
@@ -69,20 +75,16 @@ public class SettingsActivity extends Activity {
     private void saveSettings() {
         switch (rgScaleType.getCheckedRadioButtonId()) {
             case R.id.rbFitScale:
-                setExtraWithScaleType(AppConstants.ScaleType.SCALE_TYPE_FIT_XY);
+                saveArgumentsWithScaleType(AppConstants.ScaleType.SCALE_TYPE_FIT_XY);
                 break;
 
             case R.id.rbCenterScale:
-                setExtraWithScaleType(AppConstants.ScaleType.SCALE_TYPE_FIT_CENTER);
+                saveArgumentsWithScaleType(AppConstants.ScaleType.SCALE_TYPE_FIT_CENTER);
                 break;
         }
     }
 
-    private void backToWineActivity() {
-        finish();
-    }
-
-    private boolean intentHasExtra(String key) {
-        return getIntent().hasExtra(key);
+    private boolean argumentsContainsKey(String key) {
+        return getArguments().containsKey(key);
     }
 }
