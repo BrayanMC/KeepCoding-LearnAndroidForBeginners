@@ -1,13 +1,14 @@
 package com.bmc.baccus.controller.fragments;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +24,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class SettingsFragment extends Fragment {
+public class SettingsFragment extends DialogFragment {
 
     // Vistas
     @BindView(R.id.rgScaleType)
@@ -42,6 +43,15 @@ public class SettingsFragment extends Fragment {
         }
 
         return rootView;
+    }
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        dialog.setTitle(R.string.settings);
+
+        return dialog;
     }
 
     @OnClick(R.id.btnCancel)
@@ -63,19 +73,30 @@ public class SettingsFragment extends Fragment {
     }
 
     private void cancelSettings() {
-        getActivity().setResult(Activity.RESULT_CANCELED);
-        getActivity().finish();
+        if (getTargetFragment() != null) {
+            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, null);
+            dismiss();
+        } else {
+            getActivity().setResult(Activity.RESULT_CANCELED);
+            getActivity().finish();
+        }
     }
 
     private void saveArgumentsWithScaleType(AppConstants.ScaleType type) {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
         editor.putString(PreferencesConstants.PREF_IMAGE_SCALE_TYPE, type.getType() == 0 ? AppConstants.SCALE_TYPE_FIT_XY : AppConstants.SCALE_TYPE_FIT_CENTER);
+        editor.apply();
 
-        Navigation.getInstance().setResult(Activity.RESULT_OK
-                , getActivity()
-                , new Intent().putExtra(AppConstants.EXTRA_WINE_IMAGE_SCALE_TYPE, type.getType() == 0 ? AppConstants.SCALE_TYPE_FIT_XY : AppConstants.SCALE_TYPE_FIT_CENTER)
-                , NavigationUI.Activity.WINE
-                , true);
+        if (getTargetFragment() != null) {
+            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, new Intent().putExtra(AppConstants.EXTRA_WINE_IMAGE_SCALE_TYPE, type.getType() == 0 ? AppConstants.SCALE_TYPE_FIT_XY : AppConstants.SCALE_TYPE_FIT_CENTER));
+            dismiss();
+        } else {
+            Navigation.getInstance().setResult(Activity.RESULT_OK
+                    , getActivity()
+                    , new Intent().putExtra(AppConstants.EXTRA_WINE_IMAGE_SCALE_TYPE, type.getType() == 0 ? AppConstants.SCALE_TYPE_FIT_XY : AppConstants.SCALE_TYPE_FIT_CENTER)
+                    , NavigationUI.Activity.WINE
+                    , true);
+        }
     }
 
     private void saveSettings() {

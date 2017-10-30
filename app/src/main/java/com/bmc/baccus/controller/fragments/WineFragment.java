@@ -105,20 +105,19 @@ public class WineFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        super.onOptionsItemSelected(item);
-
         switch (item.getItemId()) {
             case R.id.action_settings:
-                Navigation.getInstance().startActivityForResultWithExtras(getActivity()
-                        , new Intent().putExtra(AppConstants.EXTRA_WINE_IMAGE_SCALE_TYPE, ivWine.getScaleType() == ImageView.ScaleType.FIT_XY ? AppConstants.SCALE_TYPE_FIT_XY : AppConstants.SCALE_TYPE_FIT_CENTER)
-                        , NavigationUI.Activity.SETTINGS
-                        , false
-                        , SETTINGS_REQUEST);
+                SettingsFragment settingsFragment = new SettingsFragment();
+                Bundle arguments = new Bundle();
+                arguments.putSerializable(AppConstants.EXTRA_WINE_IMAGE_SCALE_TYPE, ivWine.getScaleType() == ImageView.ScaleType.FIT_XY ? AppConstants.SCALE_TYPE_FIT_XY : AppConstants.SCALE_TYPE_FIT_CENTER);
+                settingsFragment.setArguments(arguments);
+                settingsFragment.setTargetFragment(this, SETTINGS_REQUEST);
+                settingsFragment.show(getFragmentManager(), null);
 
                 return true;
         }
 
-        return false;
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

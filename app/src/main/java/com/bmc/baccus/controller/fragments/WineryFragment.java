@@ -55,8 +55,10 @@ public class WineryFragment extends Fragment implements ViewPager.OnPageChangeLi
 
         initData();
         initViews();
+        getCurrentIndex();
 
         viewPager.setCurrentItem(currentIndex);
+        updateActionBar(currentIndex);
 
         return rootView;
     }
@@ -76,21 +78,22 @@ public class WineryFragment extends Fragment implements ViewPager.OnPageChangeLi
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        super.onOptionsItemSelected(item);
+        boolean superValue = super.onOptionsItemSelected(item);
 
         switch (item.getItemId()) {
             case R.id.menu_next:
                 viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
 
-                break;
+                return true;
 
             case R.id.menu_prev:
                 viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
 
-                break;
-        }
+                return true;
 
-        return true;
+            default:
+                return superValue;
+        }
     }
 
     @Override
@@ -113,9 +116,9 @@ public class WineryFragment extends Fragment implements ViewPager.OnPageChangeLi
     public void onPageSelected(int position) {
         updateActionBar(position);
 
-    PreferenceManager.getDefaultSharedPreferences(getActivity()).edit()
-            .putInt(PreferencesConstants.PREF_LAST_WINE_INDEX, position)
-            .apply();
+        PreferenceManager.getDefaultSharedPreferences(getActivity()).edit()
+                .putInt(PreferencesConstants.PREF_LAST_WINE_INDEX, position)
+                .apply();
     }
 
     @Override
@@ -132,7 +135,6 @@ public class WineryFragment extends Fragment implements ViewPager.OnPageChangeLi
         viewPager.addOnPageChangeListener(this);
 
         mActionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        updateActionBar(getCurrentIndex());
     }
 
     private int getCurrentIndex() {

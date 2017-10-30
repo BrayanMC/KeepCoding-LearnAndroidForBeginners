@@ -32,7 +32,8 @@
         <activity
             android:name=".controller.activities.WineryActivity"
             android:label="@string/title_activity_winery"
-            android:parentActivityName=".controller.activities.WineListActivity">
+            android:parentActivityName=".controller.activities.WineListActivity"
+            tools:targetApi="jelly_bean">
 
         </activity>
 
