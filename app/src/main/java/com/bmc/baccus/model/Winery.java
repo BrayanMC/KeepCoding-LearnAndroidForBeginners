@@ -91,6 +91,10 @@ public class Winery {
         return oWinery;
     }
 
+    public static boolean isInstanceAvailable() {
+        return sInstace != null;
+    }
+
     public Wine getWine(int index) {
         return listWines.get(index);
     }

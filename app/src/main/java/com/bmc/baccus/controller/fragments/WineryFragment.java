@@ -1,5 +1,8 @@
 package com.bmc.baccus.controller.fragments;
 
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -30,6 +33,7 @@ public class WineryFragment extends Fragment implements ViewPager.OnPageChangeLi
     ViewPager viewPager = null;
 
     private ActionBar mActionBar = null;
+    private ProgressDialog progressDialog = null;
 
     private Winery oWinery = null;
 
@@ -54,11 +58,6 @@ public class WineryFragment extends Fragment implements ViewPager.OnPageChangeLi
         ButterKnife.bind(this, rootView);
 
         initData();
-        initViews();
-        getCurrentIndex();
-
-        viewPager.setCurrentItem(currentIndex);
-        updateActionBar(currentIndex);
 
         return rootView;
     }
@@ -78,21 +77,23 @@ public class WineryFragment extends Fragment implements ViewPager.OnPageChangeLi
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        boolean superValue = super.onOptionsItemSelected(item);
+        if (viewPager != null) {
+            switch (item.getItemId()) {
+                case R.id.menu_next:
+                    viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
 
-        switch (item.getItemId()) {
-            case R.id.menu_next:
-                viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
+                    return true;
 
-                return true;
+                case R.id.menu_prev:
+                    viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
 
-            case R.id.menu_prev:
-                viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+                    return true;
 
-                return true;
-
-            default:
-                return superValue;
+                default:
+                    return super.onOptionsItemSelected(item);
+            }
+        } else {
+            return super.onOptionsItemSelected(item);
         }
     }
 
@@ -100,11 +101,13 @@ public class WineryFragment extends Fragment implements ViewPager.OnPageChangeLi
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
-        MenuItem menuNext = menu.findItem(R.id.menu_next);
-        MenuItem menuPrev = menu.findItem(R.id.menu_prev);
+        if (viewPager != null) {
+            MenuItem menuNext = menu.findItem(R.id.menu_next);
+            MenuItem menuPrev = menu.findItem(R.id.menu_prev);
 
-        menuNext.setEnabled(viewPager.getCurrentItem() < oWinery.getWineCount() - 1);
-        menuPrev.setEnabled(viewPager.getCurrentItem() > 0);
+            menuNext.setEnabled(viewPager.getCurrentItem() < oWinery.getWineCount() - 1);
+            menuPrev.setEnabled(viewPager.getCurrentItem() > 0);
+        }
     }
 
     @Override
@@ -126,8 +129,42 @@ public class WineryFragment extends Fragment implements ViewPager.OnPageChangeLi
 
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (viewPager != null) {
+            getArguments().putInt(AppConstants.ARG_WINE_INDEX, viewPager.getCurrentItem());
+        }
+    }
+
     private void initData() {
-        oWinery = Winery.getInstance();
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Winery> wineryAsyncTask = new AsyncTask<Void, Void, Winery>() {
+            @Override
+            protected Winery doInBackground(Void... voids) {
+                return Winery.getInstance();
+            }
+
+            @Override
+            protected void onPostExecute(Winery winery) {
+                super.onPostExecute(winery);
+                oWinery = Winery.getInstance();
+                initViews();
+                getCurrentIndex();
+
+                viewPager.setCurrentItem(currentIndex);
+                updateActionBar(currentIndex);
+                progressDialog.dismiss();
+            }
+        };
+
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setTitle(R.string.loading);
+
+        if (!Winery.isInstanceAvailable()) {
+            progressDialog.show();
+        }
+
+        wineryAsyncTask.execute();
     }
 
     private void initViews() {

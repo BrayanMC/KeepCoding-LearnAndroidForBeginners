@@ -1,7 +1,10 @@
 package com.bmc.baccus.controller.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -21,6 +24,7 @@ import android.widget.TextView;
 import com.bmc.baccus.BuildConfig;
 import com.bmc.baccus.R;
 import com.bmc.baccus.model.Wine;
+import com.bmc.baccus.model.Winery;
 import com.bmc.baccus.utils.AppConstants;
 import com.bmc.baccus.utils.PreferencesConstants;
 import com.bmc.baccus.utils.navigation.Navigation;
@@ -37,7 +41,6 @@ public class WineFragment extends Fragment {
 
     private static final String TAG = "WineFragment";
 
-    // Modelo
     private Wine oWine = null;
 
     // Vistas
@@ -65,6 +68,8 @@ public class WineFragment extends Fragment {
     @BindView(R.id.llGrapesContainer)
     ViewGroup vgWineGrapesContainer = null;
 
+    private ProgressDialog progressDialog = null;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -77,15 +82,7 @@ public class WineFragment extends Fragment {
             getWineObjectFromArguments();
         }
 
-        // Damos valor a las vistas con el modelo
-        setViewsFromModel();
-
-        // Actualizar lista de Grapes
-        updateGrapesList();
-
-        if (savedInstanceState != null && savedInstanceState.containsKey(STAGE_IMAGE_SCALE_TYPE)) {
-            setRadioGroupCheck(savedInstanceState.getString(STAGE_IMAGE_SCALE_TYPE));
-        }
+        setViewsFromModel(savedInstanceState);
 
         return rootView;
     }
@@ -164,15 +161,43 @@ public class WineFragment extends Fragment {
         return getArguments().containsKey(key);
     }
 
-    private void setViewsFromModel() {
-        ivWine.setImageBitmap(oWine.getPhoto(getActivity()));
-        tvWineName.setText(oWine.getName());
-        tvWineType.setText(oWine.getType());
-        tvWineOrigin.setText(oWine.getOrigin());
-        rbWine.setRating(oWine.getRating());
-        tvWineCompany.setText(oWine.getCompanyName());
-        tvWineNotes.setText(oWine.getNotes());
-        rbWine.setRating(oWine.getRating());
+    private void setViewsFromModel(final Bundle savedInstanceState) {
+
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> wineAsyncTask = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                ivWine.setImageBitmap(oWine.getPhoto(getActivity()));
+                tvWineName.setText(oWine.getName());
+                tvWineType.setText(oWine.getType());
+                tvWineOrigin.setText(oWine.getOrigin());
+                rbWine.setRating(oWine.getRating());
+                tvWineCompany.setText(oWine.getCompanyName());
+                tvWineNotes.setText(oWine.getNotes());
+                rbWine.setRating(oWine.getRating());
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                updateGrapesList();
+
+                if (savedInstanceState != null && savedInstanceState.containsKey(STAGE_IMAGE_SCALE_TYPE)) {
+                    setRadioGroupCheck(savedInstanceState.getString(STAGE_IMAGE_SCALE_TYPE));
+                }
+                progressDialog.dismiss();
+            }
+        };
+
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setTitle(R.string.loading);
+
+        if (!Winery.isInstanceAvailable()) {
+            progressDialog.show();
+        }
+
+        wineAsyncTask.execute();
     }
 
     private void updateGrapesList() {

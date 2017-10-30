@@ -1,6 +1,9 @@
 package com.bmc.baccus.controller.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -21,6 +24,7 @@ import butterknife.OnItemClick;
 public class WineListFragment extends Fragment {
 
     private OnWineSelectedListener mOnWineSelectedListener = null;
+    private ProgressDialog progressDialog = null;
 
     @BindView(android.R.id.list)
     ListView listView;
@@ -31,14 +35,39 @@ public class WineListFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_wine_list, container, false);
         ButterKnife.bind(this, rootView);
 
-        initViews();
+        initData();
 
         return rootView;
     }
 
-    private void initViews() {
-        Winery oWinery = Winery.getInstance();
-        ArrayAdapter<Wine> wineArrayAdapter = new ArrayAdapter<Wine>(getActivity(), android.R.layout.simple_list_item_1, oWinery.getWineList());
+    private void initData() {
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Winery> wineryAsyncTask = new AsyncTask<Void, Void, Winery>() {
+            @Override
+            protected Winery doInBackground(Void... voids) {
+                return Winery.getInstance();
+            }
+
+            @Override
+            protected void onPostExecute(Winery winery) {
+                super.onPostExecute(winery);
+                initViews(winery);
+
+                progressDialog.dismiss();
+            }
+        };
+
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setTitle(R.string.loading);
+
+        if (!Winery.isInstanceAvailable()) {
+            progressDialog.show();
+        }
+
+        wineryAsyncTask.execute();
+    }
+
+    private void initViews(Winery winery) {
+        ArrayAdapter<Wine> wineArrayAdapter = new ArrayAdapter<Wine>(getActivity(), android.R.layout.simple_list_item_1, winery.getWineList());
 
         listView.setAdapter(wineArrayAdapter);
     }
