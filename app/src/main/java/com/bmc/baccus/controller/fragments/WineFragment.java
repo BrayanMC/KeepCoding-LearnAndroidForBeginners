@@ -165,7 +165,7 @@ public class WineFragment extends Fragment {
     }
 
     private void setViewsFromModel() {
-        ivWine.setImageResource(oWine.getPhoto());
+        ivWine.setImageBitmap(oWine.getPhoto(getActivity()));
         tvWineName.setText(oWine.getName());
         tvWineType.setText(oWine.getType());
         tvWineOrigin.setText(oWine.getOrigin());

@@ -18,9 +18,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnItemClick;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class WineListFragment extends Fragment {
 
     private OnWineSelectedListener mOnWineSelectedListener = null;
@@ -31,7 +28,6 @@ public class WineListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_wine_list, container, false);
         ButterKnife.bind(this, rootView);
 
