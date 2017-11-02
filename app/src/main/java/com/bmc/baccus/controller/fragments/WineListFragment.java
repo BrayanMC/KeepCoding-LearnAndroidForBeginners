@@ -1,10 +1,9 @@
 package com.bmc.baccus.controller.fragments;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,15 +15,17 @@ import android.widget.ListView;
 import com.bmc.baccus.R;
 import com.bmc.baccus.model.Wine;
 import com.bmc.baccus.model.Winery;
+import com.bmc.baccus.network.asynctask.RequestGetWines;
+import com.bmc.baccus.network.asynctask.interfaces.IRequestGetWines;
+import com.bmc.baccus.utils.AppConstants;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnItemClick;
 
-public class WineListFragment extends Fragment {
+public class WineListFragment extends Fragment implements IRequestGetWines {
 
     private OnWineSelectedListener mOnWineSelectedListener = null;
-    private ProgressDialog progressDialog = null;
 
     @BindView(android.R.id.list)
     ListView listView;
@@ -41,29 +42,31 @@ public class WineListFragment extends Fragment {
     }
 
     private void initData() {
-        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Winery> wineryAsyncTask = new AsyncTask<Void, Void, Winery>() {
-            @Override
-            protected Winery doInBackground(Void... voids) {
-                return Winery.getInstance();
-            }
-
-            @Override
-            protected void onPostExecute(Winery winery) {
-                super.onPostExecute(winery);
-                initViews(winery);
-
-                progressDialog.dismiss();
-            }
-        };
-
-        progressDialog = new ProgressDialog(getActivity());
-        progressDialog.setTitle(R.string.loading);
 
         if (!Winery.isInstanceAvailable()) {
-            progressDialog.show();
-        }
+            final RequestGetWines requestGetWines = new RequestGetWines(getActivity());
+            requestGetWines.iRequestGetWines = this;
+            requestGetWines.execute();
 
-        wineryAsyncTask.execute();
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (requestGetWines.getStatus() == AsyncTask.Status.RUNNING) {
+                        requestGetWines.cancel(true);
+                    }
+                }
+            }, AppConstants.ASYNCTASK_TIMEOUT);
+        } else {
+            initViews(Winery.getInstance());
+        }
+    }
+
+    @Override
+    public void showData(Winery winery) {
+        if (winery != null) {
+            initViews(winery);
+        }
     }
 
     private void initViews(Winery winery) {
@@ -84,7 +87,7 @@ public class WineListFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mOnWineSelectedListener = (OnWineSelectedListener)getActivity();
+        mOnWineSelectedListener = (OnWineSelectedListener) getActivity();
     }
 
     @Override

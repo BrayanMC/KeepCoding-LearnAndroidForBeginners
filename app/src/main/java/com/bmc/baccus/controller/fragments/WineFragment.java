@@ -24,7 +24,6 @@ import android.widget.TextView;
 import com.bmc.baccus.BuildConfig;
 import com.bmc.baccus.R;
 import com.bmc.baccus.model.Wine;
-import com.bmc.baccus.model.Winery;
 import com.bmc.baccus.utils.AppConstants;
 import com.bmc.baccus.utils.PreferencesConstants;
 import com.bmc.baccus.utils.navigation.Navigation;
@@ -77,6 +76,11 @@ public class WineFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_wine, container, false);
         ButterKnife.bind(this, rootView);
+
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setTitle(R.string.loading);
+
+        progressDialog.show();
 
         if (argumentsContainsKey(AppConstants.ARG_OBJECT_WINE)) {
             getWineObjectFromArguments();
@@ -163,17 +167,23 @@ public class WineFragment extends Fragment {
 
     private void setViewsFromModel(final Bundle savedInstanceState) {
 
-        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> wineAsyncTask = new AsyncTask<Void, Void, Void>() {
+        @SuppressLint("StaticFieldLeak") final AsyncTask<Void, Void, Void> wineAsyncTask = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                ivWine.setImageBitmap(oWine.getPhoto(getActivity()));
-                tvWineName.setText(oWine.getName());
-                tvWineType.setText(oWine.getType());
-                tvWineOrigin.setText(oWine.getOrigin());
-                rbWine.setRating(oWine.getRating());
-                tvWineCompany.setText(oWine.getCompanyName());
-                tvWineNotes.setText(oWine.getNotes());
-                rbWine.setRating(oWine.getRating());
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ivWine.setImageBitmap(oWine.getPhoto(getActivity()));
+                        tvWineName.setText(oWine.getName());
+                        tvWineType.setText(oWine.getType());
+                        tvWineOrigin.setText(oWine.getOrigin());
+                        rbWine.setRating(oWine.getRating());
+                        tvWineCompany.setText(oWine.getCompanyName());
+                        tvWineNotes.setText(oWine.getNotes());
+                        rbWine.setRating(oWine.getRating());
+                    }
+                });
 
                 return null;
             }
@@ -186,16 +196,10 @@ public class WineFragment extends Fragment {
                 if (savedInstanceState != null && savedInstanceState.containsKey(STAGE_IMAGE_SCALE_TYPE)) {
                     setRadioGroupCheck(savedInstanceState.getString(STAGE_IMAGE_SCALE_TYPE));
                 }
+
                 progressDialog.dismiss();
             }
         };
-
-        progressDialog = new ProgressDialog(getActivity());
-        progressDialog.setTitle(R.string.loading);
-
-        if (!Winery.isInstanceAvailable()) {
-            progressDialog.show();
-        }
 
         wineAsyncTask.execute();
     }

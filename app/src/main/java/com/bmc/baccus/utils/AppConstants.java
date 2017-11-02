@@ -12,6 +12,8 @@ public class AppConstants {
     public static final String SCALE_TYPE_FIT_XY = "0";
     public static final String SCALE_TYPE_FIT_CENTER = "1";
 
+    public static final int ASYNCTASK_TIMEOUT = 20000;
+
     public enum ScaleType {
         SCALE_TYPE_FIT_XY(0),
         SCALE_TYPE_FIT_CENTER(1);

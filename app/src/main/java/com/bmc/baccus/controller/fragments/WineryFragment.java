@@ -1,9 +1,8 @@
 package com.bmc.baccus.controller.fragments;
 
-import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,19 +21,22 @@ import android.view.ViewGroup;
 import com.bmc.baccus.R;
 import com.bmc.baccus.controller.adapters.WineryPagerAdapter;
 import com.bmc.baccus.model.Winery;
+import com.bmc.baccus.network.asynctask.RequestGetWines;
+import com.bmc.baccus.network.asynctask.interfaces.IRequestGetWines;
 import com.bmc.baccus.utils.AppConstants;
 import com.bmc.baccus.utils.PreferencesConstants;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class WineryFragment extends Fragment implements ViewPager.OnPageChangeListener {
+public class WineryFragment extends Fragment implements ViewPager.OnPageChangeListener, IRequestGetWines {
+
+    private static final String TAG = "WineryFragment";
 
     @BindView(R.id.viewPager)
     ViewPager viewPager = null;
 
     private ActionBar mActionBar = null;
-    private ProgressDialog progressDialog = null;
 
     private Winery oWinery = null;
 
@@ -101,10 +104,10 @@ public class WineryFragment extends Fragment implements ViewPager.OnPageChangeLi
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
-        if (viewPager != null) {
-            MenuItem menuNext = menu.findItem(R.id.menu_next);
-            MenuItem menuPrev = menu.findItem(R.id.menu_prev);
+        MenuItem menuNext = menu.findItem(R.id.menu_next);
+        MenuItem menuPrev = menu.findItem(R.id.menu_prev);
 
+        if (viewPager != null && oWinery != null) {
             menuNext.setEnabled(viewPager.getCurrentItem() < oWinery.getWineCount() - 1);
             menuPrev.setEnabled(viewPager.getCurrentItem() > 0);
         }
@@ -138,33 +141,31 @@ public class WineryFragment extends Fragment implements ViewPager.OnPageChangeLi
     }
 
     private void initData() {
-        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Winery> wineryAsyncTask = new AsyncTask<Void, Void, Winery>() {
-            @Override
-            protected Winery doInBackground(Void... voids) {
-                return Winery.getInstance();
-            }
-
-            @Override
-            protected void onPostExecute(Winery winery) {
-                super.onPostExecute(winery);
-                oWinery = Winery.getInstance();
-                initViews();
-                getCurrentIndex();
-
-                viewPager.setCurrentItem(currentIndex);
-                updateActionBar(currentIndex);
-                progressDialog.dismiss();
-            }
-        };
-
-        progressDialog = new ProgressDialog(getActivity());
-        progressDialog.setTitle(R.string.loading);
 
         if (!Winery.isInstanceAvailable()) {
-            progressDialog.show();
-        }
+            final RequestGetWines requestGetWines = new RequestGetWines(getActivity());
+            requestGetWines.iRequestGetWines = this;
+            requestGetWines.execute();
 
-        wineryAsyncTask.execute();
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (requestGetWines.getStatus() == AsyncTask.Status.RUNNING) {
+                        requestGetWines.cancel(true);
+                    }
+                }
+            }, AppConstants.ASYNCTASK_TIMEOUT);
+        } else {
+            oWinery = Winery.getInstance();
+            initViews();
+        }
+    }
+
+    @Override
+    public void showData(Winery winery) {
+        oWinery = winery;
+        initViews();
     }
 
     private void initViews() {
@@ -172,6 +173,10 @@ public class WineryFragment extends Fragment implements ViewPager.OnPageChangeLi
         viewPager.addOnPageChangeListener(this);
 
         mActionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+
+        getCurrentIndex();
+        viewPager.setCurrentItem(currentIndex);
+        updateActionBar(currentIndex);
     }
 
     private int getCurrentIndex() {
@@ -180,6 +185,7 @@ public class WineryFragment extends Fragment implements ViewPager.OnPageChangeLi
     }
 
     private void updateActionBar(int index) {
+        Log.i(TAG, oWinery.getWine(index).getName());
         mActionBar.setTitle(oWinery.getWine(index).getName());
     }
 

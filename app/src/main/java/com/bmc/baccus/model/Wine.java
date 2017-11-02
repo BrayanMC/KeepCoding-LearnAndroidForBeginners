@@ -162,7 +162,7 @@ public class Wine implements Serializable {
 
                 return bmp;
             } catch (Exception e) {
-                Log.e("", e.getMessage());
+//                Log.e("WINE", e.getMessage());
             } finally {
                 try {
                     if (in != null) {
