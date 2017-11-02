@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/ivItemWineImage"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true" />
+
+    <TextView
+        android:id="@+id/tvItemWineName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@+id/ivItemWineImage"
+        android:layout_toRightOf="@+id/ivItemWineImage"
+        android:textSize="18sp"
+        android:textColor="#000"
+        android:text="Wine name" />
+
+    <TextView
+        android:id="@+id/tvItemWineCompany"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/tvItemWineName"
+        android:layout_toEndOf="@id/ivItemWineImage"
+        android:layout_toRightOf="@+id/ivItemWineImage"
+        android:textSize="16sp"
+        android:textColor="#808080"
+        android:text="Wine Company" />
+
+</RelativeLayout>

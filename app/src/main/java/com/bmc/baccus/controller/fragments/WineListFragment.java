@@ -1,16 +1,19 @@
 package com.bmc.baccus.controller.fragments;
 
 import android.app.Activity;
+import android.content.Context;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListView;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bmc.baccus.R;
 import com.bmc.baccus.model.Wine;
@@ -19,22 +22,35 @@ import com.bmc.baccus.network.asynctask.RequestGetWines;
 import com.bmc.baccus.network.asynctask.interfaces.IRequestGetWines;
 import com.bmc.baccus.utils.AppConstants;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnItemClick;
 
 public class WineListFragment extends Fragment implements IRequestGetWines {
 
     private OnWineSelectedListener mOnWineSelectedListener = null;
 
-    @BindView(android.R.id.list)
-    ListView listView;
+    private Winery oWinery = null;
+
+    private ExpandableListView listView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_wine_list, container, false);
         ButterKnife.bind(this, rootView);
+
+        listView = (ExpandableListView) rootView.findViewById(android.R.id.list);
+        listView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                int index = oWinery.getAbsolutePosition(Winery.WineType.values()[groupPosition], childPosition);
+
+                if (mOnWineSelectedListener != null) {
+                    mOnWineSelectedListener.onWineSelected(index);
+                }
+
+                return true;
+            }
+        });
 
         initData();
 
@@ -65,23 +81,14 @@ public class WineListFragment extends Fragment implements IRequestGetWines {
     @Override
     public void showData(Winery winery) {
         if (winery != null) {
+            oWinery = winery;
             initViews(winery);
         }
     }
 
     private void initViews(Winery winery) {
-        ArrayAdapter<Wine> wineArrayAdapter = new ArrayAdapter<Wine>(getActivity(), android.R.layout.simple_list_item_1, winery.getWineList());
-
-        listView.setAdapter(wineArrayAdapter);
-    }
-
-    @OnItemClick(android.R.id.list)
-    void onListItemClick(int position) {
-        Log.i("", ((Wine) listView.getItemAtPosition(position)).toString());
-
-        if (mOnWineSelectedListener != null) {
-            mOnWineSelectedListener.onWineSelected(position);
-        }
+        WineListAdapter wineListAdapter = new WineListAdapter(getActivity(), winery);
+        listView.setAdapter(wineListAdapter);
     }
 
     @Override
@@ -98,5 +105,101 @@ public class WineListFragment extends Fragment implements IRequestGetWines {
 
     public interface OnWineSelectedListener {
         void onWineSelected(int wineIndex);
+    }
+
+    class WineListAdapter extends BaseExpandableListAdapter {
+
+        private Typeface tf = null;
+
+        private Context context = null;
+        private Winery winery = null;
+
+        public WineListAdapter(Context context, Winery winery) {
+            this.context = context;
+            this.winery = winery;
+            tf = Typeface.createFromAsset(context.getAssets(), "Valentina-Regular.otf");
+        }
+
+        @Override
+        public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View viewRow = inflater.inflate(R.layout.list_item_wine, parent, false);
+
+            ImageView ivItemWineImage = viewRow.findViewById(R.id.ivItemWineImage);
+            TextView tvItemWineName = viewRow.findViewById(R.id.tvItemWineName);
+            TextView tvItemWineCompany = viewRow.findViewById(R.id.tvItemWineCompany);
+
+            Wine currentWine = getChild(groupPosition, childPosition);
+            ivItemWineImage.setImageBitmap(currentWine.getPhoto(getActivity()));
+            tvItemWineName.setText(currentWine.getName());
+            tvItemWineCompany.setText(currentWine.getCompanyName());
+
+            Typeface tf = Typeface.createFromAsset(context.getAssets(), "Valentina-Regular.otf");
+            tvItemWineName.setTypeface(tf);
+            tvItemWineCompany.setTypeface(tf);
+
+            return viewRow;
+        }
+
+
+        @Override
+        public int getGroupCount() {
+            return Winery.WineType.values().length;
+        }
+
+        @Override
+        public int getChildrenCount(int groupPosition) {
+            return winery.getWineCount(getGroup(groupPosition));
+        }
+
+        @Override
+        public Winery.WineType getGroup(int groupPosition) {
+            return Winery.WineType.values()[groupPosition];
+        }
+
+        @Override
+        public Wine getChild(int groupPosition, int childPosition) {
+            return winery.getWine(getGroup(groupPosition), childPosition);
+        }
+
+        @Override
+        public long getGroupId(int groupPosition) {
+            return 0;
+        }
+
+        @Override
+        public long getChildId(int groupPosition, int childPosition) {
+            return 0;
+        }
+
+        @Override
+        public boolean hasStableIds() {
+            return false;
+        }
+
+        @Override
+        public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View wineHeader = inflater.inflate(R.layout.list_item_wine_header, parent, false);
+            TextView headerText = (TextView) wineHeader.findViewById(R.id.tvHeaderWineType);
+            headerText.setTypeface(tf);
+
+            if (getGroup(groupPosition) == Winery.WineType.RED) {
+                headerText.setText(R.string.red);
+            } else if (getGroup(groupPosition) == Winery.WineType.WHITE) {
+                headerText.setText(R.string.white);
+            } else if (getGroup(groupPosition) == Winery.WineType.ROSE) {
+                headerText.setText(R.string.rose);
+            } else {
+                headerText.setText(R.string.other);
+            }
+
+            return wineHeader;
+        }
+
+        @Override
+        public boolean isChildSelectable(int groupPosition, int childPosition) {
+            return false;
+        }
     }
 }
