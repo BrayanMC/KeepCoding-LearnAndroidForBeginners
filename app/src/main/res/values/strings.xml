@@ -18,4 +18,5 @@
     <string name="white">Blanco</string>
     <string name="rose">Rosado</string>
     <string name="other">Otro</string>
+    <string name="goToWeb">Ir a la web del vino</string>
 </resources>

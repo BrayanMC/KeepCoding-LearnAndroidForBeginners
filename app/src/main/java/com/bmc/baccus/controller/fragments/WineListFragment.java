@@ -1,7 +1,9 @@
 package com.bmc.baccus.controller.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -121,16 +123,30 @@ public class WineListFragment extends Fragment implements IRequestGetWines {
         }
 
         @Override
-        public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+        public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View viewRow = inflater.inflate(R.layout.list_item_wine, parent, false);
 
-            ImageView ivItemWineImage = viewRow.findViewById(R.id.ivItemWineImage);
+            final ImageView ivItemWineImage = viewRow.findViewById(R.id.ivItemWineImage);
             TextView tvItemWineName = viewRow.findViewById(R.id.tvItemWineName);
             TextView tvItemWineCompany = viewRow.findViewById(R.id.tvItemWineCompany);
 
-            Wine currentWine = getChild(groupPosition, childPosition);
-            ivItemWineImage.setImageBitmap(currentWine.getPhoto(getActivity()));
+            final Wine currentWine = getChild(groupPosition, childPosition);
+
+            @SuppressLint("StaticFieldLeak") final AsyncTask<Void, Void, Bitmap> showDataAsyncTask = new AsyncTask<Void, Void, Bitmap>() {
+                @Override
+                protected Bitmap doInBackground(Void... voids) {
+                    return currentWine.getPhoto(getActivity());
+                }
+
+                @Override
+                protected void onPostExecute(Bitmap bitmap) {
+                    ivItemWineImage.setImageBitmap(bitmap);
+                }
+            };
+
+            showDataAsyncTask.execute();
+
             tvItemWineName.setText(currentWine.getName());
             tvItemWineCompany.setText(currentWine.getCompanyName());
 
@@ -199,7 +215,7 @@ public class WineListFragment extends Fragment implements IRequestGetWines {
 
         @Override
         public boolean isChildSelectable(int groupPosition, int childPosition) {
-            return false;
+            return true;
         }
     }
 }

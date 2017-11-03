@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/fondo"
     android:orientation="vertical"
     tools:context="com.bmc.baccus.controller.activities.WineActivity">
 
@@ -29,65 +30,103 @@
 
             <TextView
                 android:id="@+id/tvWineName"
+                style="@style/WineTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Wine Name" />
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <RatingBar
-                    android:id="@+id/rbWine"
-                    style="?android:attr/ratingBarStyleSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:isIndicator="true"
-                    android:numStars="5"
-                    android:stepSize="0.1" />
-
-                <ImageButton
-                    android:id="@+id/ibtnGoToWeb"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:background="@drawable/ic_menu_info_details"
-                    android:onClick="goToDetails" />
-
-            </RelativeLayout>
-
-            <TextView
-                android:id="@+id/tvWineCompany"
+            <RatingBar
+                android:id="@+id/rbWine"
+                style="@style/WineRating"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Wine Company" />
-
-            <TextView
-                android:id="@+id/tvWineType"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Wine Type" />
-
-            <TextView
-                android:id="@+id/tvWineOrigin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Wine Origin" />
+                android:layout_marginTop="50dp"
+                android:isIndicator="true"
+                android:numStars="5"
+                android:stepSize="0.1" />
 
             <ScrollView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
                 <LinearLayout
-                    android:id="@+id/llGrapesContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvWineCompanySubtitle"
+                        style="@style/WineSubtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Wine Company Subtitle" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/tvWineCompany"
+                            style="@style/WineText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Wine Company" />
+
+                        <ImageButton
+                            android:id="@+id/ibtnGoToWeb"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:background="@android:color/transparent"
+                            android:contentDescription="@string/goToWeb"
+                            android:src="@drawable/www" />
+
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/tvWineTypeSubtitle"
+                        style="@style/WineSubtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Wine Type Subtitle" />
+
+                    <TextView
+                        android:id="@+id/tvWineType"
+                        style="@style/WineText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Wine Type" />
+
+                    <TextView
+                        android:id="@+id/tvWineOriginSubtitle"
+                        style="@style/WineSubtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Wine Origin Subtitle" />
+
+                    <TextView
+                        android:id="@+id/tvWineOrigin"
+                        style="@style/WineText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Wine Origin" />
+
+                    <TextView
+                        android:id="@+id/tvWineGrapesSubtitle"
+                        style="@style/WineSubtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Wine Grapes Subtitle" />
+
+                    <LinearLayout
+                        android:id="@+id/llGrapesContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -104,6 +143,7 @@
 
         <TextView
             android:id="@+id/tvWineNotes"
+            style="@style/WineNotes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Wine Notes" />

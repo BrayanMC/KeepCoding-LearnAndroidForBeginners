@@ -4,4 +4,6 @@
     <color name="colorWhite">@android:color/white</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="special_color">#9F4545</color>
+    <color name="baccus">#96403F</color>
 </resources>
